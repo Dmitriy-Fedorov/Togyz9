@@ -1,3 +1,4 @@
+import java.util.Scanner;
 
 public class print_T9 {
 	/*
@@ -28,7 +29,9 @@ public class print_T9 {
 		else System.out.print("\n");
 		return 0;
 	}
-	static int doMove(int hod,int n, Desk player_1,Desk player_0,Kazan Kazan_1,Kazan Kazan_0){
+	
+
+	static int doMove(int hod,int n, Desk player_1,Desk player_0,Kazan Kazan_1,Kazan Kazan_0,boolean echo){
 		player[1] = player_1;
 		player[0] = player_0;
 		Kazan[1] = Kazan_1;
@@ -45,6 +48,7 @@ public class print_T9 {
 		int HOD = hod;
 		int balls = player[HOD].checkValue(n);
 		//doMove
+		player[(HOD%2)].getDestinationCELL(n,echo,"0to8 format");
 		int remainder = player[HOD].increment(n);
 		
 		int destCell=1;
@@ -68,15 +72,18 @@ public class print_T9 {
 		}
 		
 		//destination cell
+		
 		destCell = player[(HOD%2)].getDestinationCELL(HOD%2);
 		
 		
 		//put into kazan
 		if( (HOD%2)!=hod && player[(HOD%2)].checkValue(destCell)%2==0){
 			Kazan[hod].put(player[(HOD%2)].emptying(destCell));
-			System.out.println("\teven");
+			if(echo)
+				System.out.println("\teven");
 		}else{
-			System.out.println("\todd");
+			if(echo)
+				System.out.println("\todd");
 		}
 		
 		//tuzdik set
@@ -101,6 +108,7 @@ public class print_T9 {
 		return 1;
 	}
 	
+	
 	static boolean handleSameTuzdyk(Desk player_1,Desk player_0,int destCell){
 		player[1] = player_1;
 		player[0] = player_0;
@@ -121,4 +129,62 @@ public class print_T9 {
 			return true;
 		}
 	}
+	
+	
+	static int selectPlayer(int hod, String opponent,
+			Desk player_1,Desk player_0,Kazan Kazan_1,Kazan Kazan_0){
+		
+		int n=-1;
+		player[1] = player_1;
+		player[0] = player_0;
+		Kazan[1] = Kazan_1;
+		Kazan[0] = Kazan_0;
+		
+		AI_v1 ai_1 = new AI_v1(player[1],player[0],Kazan[1],Kazan[0]);
+		AI_v2 ai_2 = new AI_v2(player[1],player[0],Kazan[1],Kazan[0]);
+		Scanner sc = new Scanner(System.in);
+		
+		if(opponent.equals("human")){
+			
+			n = Integer.parseInt(Debug.getInput(sc))-1;	
+			//in order to check if yamka empty
+			while(player[hod].checkZero(n)){
+				
+				System.out.print("Cell is empty or tuzdyk.\nTry another cell:\n");
+				n = Integer.parseInt(Debug.getInput(sc))-1;
+				
+			}
+			
+		}else if(opponent.equals("random")){
+			
+			n = AI_v0.randomMove();
+			while(player[hod].checkZero(n)){
+				n = AI_v0.randomMove();
+			}
+			System.out.println((n+1));
+			
+		}else if(opponent.equals("smartRandom")){
+			
+			n=ai_1.smartRandomPlay(1);
+			System.out.println((n+1));
+			
+		}else if(opponent.equals("client")){
+			while(!T9_server.isIntegerNew() && 
+					T9_server.getHod()<9 && 
+					T9_server.getHod() >0){
+				n = T9_server.getHod();
+			}
+			
+		}else if(opponent.equals("GO")){
+			n = ai_2.dumbTreePlay_v2(1, 0, 0, false);
+			
+			System.out.println((n+1));
+		}
+		
+		
+		
+		
+		return n;
+	}
+	
 }

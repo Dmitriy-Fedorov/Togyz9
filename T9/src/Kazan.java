@@ -2,8 +2,22 @@
 public class Kazan {
 	private int score = 0;
 	private int previousScore=0;
+	boolean editable = false;
+	
 	Kazan(){
 		
+	}
+	
+	Kazan(boolean editable_){
+		editable = editable_;
+	}
+	
+	void setKazan(int a){
+		if(editable){
+			score = a;
+		}else{
+			System.out.println("This kazan is not editable");
+		}
 	}
 	
 	boolean checkWin(){

@@ -13,6 +13,46 @@ public class Desk extends Kazan{
 		
 	}
 	
+	int getNumberOfPlayerSwitching(int input){
+		int a = yamka[input]/9;
+		return a;
+	}
+	
+	double getNumberOfPlayerSwitching(double input){
+		double a = yamka[(int)input]/9;
+		return a;
+	}
+	
+	int getDestinationCELL(int input,boolean echo,String format){
+		int a, b, even;
+		if(yamka[input]!=1){
+			a = (yamka[input]-1+input)%9;
+			b = a+1;
+			even = (yamka[input]-1+input)/9;
+			if(even%2==0){
+				a=-a;
+				b=-b;
+			}
+			
+		}else{
+			if(input==8){
+				a=0;
+				b=1;
+			}else{
+				a = -input -1;
+				b = a-1;
+			}
+				
+		}
+		if(echo)
+			System.out.print("calculated destination: "+b);
+		if(format.equals("1to9 format"))
+			return b;
+		else
+			return a;
+		
+	}
+	
 	Desk(boolean editable_){
 		editable = editable_;
 	}
@@ -41,6 +81,19 @@ public class Desk extends Kazan{
 		
 	}
 	
+	boolean isDeskEmpty(){
+			
+		for(int i=0;i<9;i++){
+			if(yamka[i]!=0){
+				
+				return false;
+			}
+		}
+		
+		System.out.println("Desk is empty");
+		return true;
+	}
+	
 	//for AI
 	int getArraySum(){
 		arraySum=0;
@@ -52,7 +105,8 @@ public class Desk extends Kazan{
 	
 	int getDestinationCELL(int play){
 		//to check flow
-		System.out.print("destCELL "+play+ ":" +(destinationCELL+1));
+		//if(echo)
+			//System.out.print("destCELL "+play+ ":" +(destinationCELL+1));
 		return destinationCELL;
 	}
 	
@@ -111,13 +165,22 @@ public class Desk extends Kazan{
 				//System.out.println("dest my " + destinationCELL);
 				return 0;
 			}
-		}else{
+		}else if(begin+yamka[begin]>9){
 			for(int i=begin +1;i<9;i++){
 				yamka[i]++;
 			}
 			//destinationCELL=1;	//no need in this line
 			return yamka[begin]-(9-begin);
+			//return begin+yamka[begin];
+		}else{
+			for(int i=begin +1;i<begin+yamka[begin];i++){
+				yamka[i]++;
+			}
+			//destinationCELL=1;	//no need in this line
+			//return yamka[begin]-(9-begin);
+			return -(begin+yamka[begin]);
 		}
+		
 		
 	}
 	
@@ -166,6 +229,28 @@ public class Desk extends Kazan{
 				
 		}
 			
+	}
+	
+	String printDesk(int hod,int dummy){
+		String toPrint = "";
+		if(hod%2 == 0){
+			for(int i = 0;i<9;i++){
+				if(i!=tuzdyk)
+					toPrint = toPrint + String.format("%3d", yamka[i]);
+				else
+					toPrint = toPrint + "  *";
+			}
+				
+		}else{
+			for(int i = 8;i>=0;i--){
+				if(i!=tuzdyk)
+					toPrint = toPrint + String.format("%3d", yamka[i]);
+				else
+					toPrint = toPrint + "  *";
+			}
+				
+		}
+			return toPrint;
 	}
 	
 
