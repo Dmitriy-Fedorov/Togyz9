@@ -4,6 +4,7 @@ public class Kazan {
 	private int score = 0;
 	private int previousScore=0;
 	boolean editable = false;
+	private int winCount = 0;
 	
 	public Kazan(){
 		
@@ -29,6 +30,14 @@ public class Kazan {
 	public boolean checkWin(){
 		if(score > 81)	return true;
 		else return false;
+	}
+	
+	void winCounterPlusPlus(){
+		winCount++;
+	}
+	
+	int getWinCount(){
+		return winCount;
 	}
 	
 	public int checkScore(){

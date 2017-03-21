@@ -3,13 +3,15 @@ package mainframe;
 import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
 
+import ai_package.AI_brut;
+
 
 
 
 public class Hodder {
 	private static Desk player[] = {new Desk("Player 0"),new Desk("Player 1")};
 		
-	public static int doMove(boolean hod,int n, Desk player_1,Desk player_0, boolean echo){
+	public static int doMove(boolean hod,int n, Desk player_1,Desk player_0){
 		player[1] = player_1;	//true hod
 		player[0] = player_0;	//false hod
 		if(hod){
@@ -26,6 +28,8 @@ public class Hodder {
 		player[1] = player_1;
 		player[0] = player_0;
 		int n_1to9 = -1,hod_;
+		AI_brut brut = new AI_brut();
+		
 		if(hod)
 			hod_ = 1;
 		else
@@ -45,6 +49,16 @@ public class Hodder {
 			while(player[hod_].checkZero(n_1to9-1)){
 				n_1to9 = ThreadLocalRandom.current().nextInt(1, 9 + 1);
 			}
+			System.out.println(n_1to9);
+		}else if(opponent.equals("AI_brut")){
+			n_1to9 = brut.brut(player[1], player[0], hod, 0 /*dummy*/);
+			System.out.println(n_1to9);
+		}else if(opponent.equals("AI_deep1")){
+			n_1to9 = brut.deepBrut(player[1], player[0], hod, 1);
+			while(player[hod_].checkZero(n_1to9-1)){
+				n_1to9 = ThreadLocalRandom.current().nextInt(1, 9 + 1);
+			}
+			System.out.println(n_1to9);
 		}
 		
 		return n_1to9;

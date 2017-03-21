@@ -1,5 +1,7 @@
 package mainframe;
 
+import java.util.ArrayList;
+
 public class Desk extends Kazan{
 	private int cell[] = {9,9,9,9,9,9,9,9,9};
 	//tuzdyk debug shortcut
@@ -8,8 +10,15 @@ public class Desk extends Kazan{
 	private boolean isTuzdyk = false;
 	private boolean editable = false;
 	private String name;
+	
 	public Desk(String name){
 		this.name = name;
+	}
+	
+	public Desk(String name, boolean editable){
+		super(editable);
+		this.name = name;
+		this.editable = editable;
 	}
 	
 	public Desk(String name, int[] cells ,int score, boolean editable){
@@ -92,11 +101,6 @@ public class Desk extends Kazan{
 			}
 			
 		}
-		/*else{
-			this.emptying(this.tuzdyk, opponent);
-			if(echo)
-				System.out.println("Tuzdyk is already exist or it can not be set at this cell");
-		}*/
 		
 	}
 	
@@ -167,7 +171,7 @@ public class Desk extends Kazan{
 	}
 	
 	// Format types "1to9" and "0to8"(default)
-	private int getDestinationCELL(int input_0to8,boolean echo,String format){
+	public int getDestinationCELL(int input_0to8){
 		int temp, input_1to9 = input_0to8+1, dest_1to9;
 		if(cell[input_0to8]==1){
 			if(input_1to9==9){
@@ -175,6 +179,8 @@ public class Desk extends Kazan{
 			}else{
 				dest_1to9 = -input_1to9 - 1;
 			}
+		}else if(cell[input_0to8]==0){
+			dest_1to9 = -input_1to9;
 		}else{
 			/*	1to18
 			18 17 16 15 14 13 12 11 10 
@@ -198,8 +204,8 @@ public class Desk extends Kazan{
 	}	
 		
 	public int move(int begin_1to9, Desk opponent){
-		
-		int destCell_1to9 = this.getDestinationCELL(begin_1to9-1, false, "1to9");
+		int score = this.checkScore();
+		int destCell_1to9 = this.getDestinationCELL(begin_1to9-1);
 		int remainder = this.increment(begin_1to9); //check +
 		boolean enemy = false;
 		//if enemy false destCell is on my desk
@@ -226,14 +232,55 @@ public class Desk extends Kazan{
 		}
 		this.refreshTuzdyk(opponent);
 		
-		return 0;
+		return this.checkScore()-score;
 	}
 	
-	public static void memorizeDesks(Desk player1,Desk player0){
-		
+	public int checkMove(Desk opponent, int n_1to9){
+		int destCell = this.getDestinationCELL(n_1to9-1);
+		if(destCell>0){
+			return opponent.checkValue(n_1to9-1)+1;
+		}else
+			return 0;
 	}
 	
-	public static String printDesk(Desk player1, Desk player0, boolean hod, int[] winCount){
+	public static ArrayList<int[]> memorizeDesks(Desk player1,Desk player0, int hod_number){
+		ArrayList<int[]> container = new ArrayList<>();
+		int[] p1 = {player1.checkScore(),hod_number};
+		int[] p0 = {player0.checkScore(),hod_number};
+		container.add(player1.cell);	//0
+		container.add(p1);				//1
+		container.add(player0.cell);	//2
+		container.add(p0);				//3
+		return container;
+	}
+	
+	public static int restoreDesks(Desk player1,Desk player0,ArrayList<int[]> container){
+		player1.setDesk(container.get(0), container.get(1)[0]);
+		player0.setDesk(container.get(2), container.get(3)[0]);
+		/*
+		for(int i=0;i<9;i++){
+			System.out.print(container.get(2)[i]);
+		}
+		System.out.println("-cont2 \n");
+		for(int i=0;i<9;i++){
+			System.out.print(container.get(0)[i]);
+		}
+		System.out.println("-cont0 \n");*/
+		System.out.println("Virt desk\n" + Desk.printDesk(player1, player0, true));
+		return container.get(1)[1];
+	}
+	
+	public static void transferDesks(Desk player1,Desk player0,Desk to_player1,Desk to_player0){
+		to_player1.setDesk(player1.cell, player1.checkScore());
+		to_player0.setDesk(player0.cell, player0.checkScore());
+		System.out.println("Virt desk\n" + Desk.printDesk(to_player1, to_player0, true));
+	}
+	
+	public static void transferDesks(Desk from_player,Desk to_player){
+		to_player.setDesk(from_player.cell, from_player.checkScore());
+	}
+	
+	public static String printDesk(Desk player1, Desk player0, boolean hod){
 		//hod true->player1, hod false-> player0
 		String toPrint1 = "";
 		String toPrint0 = "";
@@ -245,7 +292,7 @@ public class Desk extends Kazan{
 			else
 				toPrint1 = toPrint1 + "  *";
 		}
-		toPrint1=toPrint1+String.format("\t%s\tScore: %d   Win: %d", player1.name, player1.checkScore(),winCount[1]);
+		toPrint1=toPrint1+String.format("%s\tScore: %d\tWin: %d", player1.name, player1.checkScore(),player1.getWinCount());
 		if(hod){
 			toPrint1=toPrint1+" *";
 		}
@@ -255,7 +302,7 @@ public class Desk extends Kazan{
 			else
 				toPrint0 = toPrint0 + "  *";
 		}
-		toPrint0=toPrint0+String.format("\t%s\tScore: %d   Win: %d", player0.name, player0.checkScore(),winCount[0]);
+		toPrint0=toPrint0+String.format("%s\tScore: %d\tWin: %d", player0.name, player0.checkScore(),player0.getWinCount());
 		if(!hod){
 			toPrint0=toPrint0+" *";
 		}
@@ -266,9 +313,10 @@ public class Desk extends Kazan{
 	
 	@Override
 	public boolean checkWin(){
-		if(super.checkWin() || this.isDeskEmpty())
+		if(super.checkWin() || this.isDeskEmpty()){
+			super.winCounterPlusPlus();
 			return true;
-		else
+		}else
 			return false;
 	}
 	

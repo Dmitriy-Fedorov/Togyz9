@@ -5,11 +5,16 @@ public class Driver {
 
 	public static void main(String[] args) {
 		int choose0 = 1;
-		int choose1 = 1, asd=0;
-		String[] igrok = {"human","AI_random","AI_smartRandom","AI_Deep1","AI_Deep2"};
+		int choose1 = 2, asd=0;
+		String[] igrok = {"human","AI_random","AI_brut","AI_deep1","AI_Deep2"};
 		String igrok0 = igrok[choose0];
 		String igrok1 = igrok[choose1];
-		Desk player[] = {new Desk(igrok0+"_"+asd++),new Desk(igrok1+"_"+asd++)};
+		
+		String igrok0_ = igrok0 + String.format("_%d", asd++);
+		igrok0_ = String.format("%15s", igrok0_);
+		String igrok1_ = igrok1 + String.format("_%d", asd++);
+		igrok1_ = String.format("%15s", igrok1_);
+		Desk player[] = {new Desk(igrok0_),new Desk(igrok1_)};
 		
 		
 		int hod_number=0;
@@ -20,12 +25,12 @@ public class Driver {
 		
 		while(true){
 			System.out.println("Hod: " + hod_number);
-			System.out.println(Desk.printDesk(player[1], player[0], false, winCount));
+			System.out.println(Desk.printDesk(player[1], player[0], false));
 			
 			while(!player[0].checkWin() && !player[1].checkWin()){
 				int n = -1;
 				
-				if(hod){
+				if(!hod){
 					n = Hodder.selectPlayer(hod, igrok0, player[1],player[0]);
 				}else{
 					n = Hodder.selectPlayer(hod, igrok1, player[1],player[0]);
@@ -35,14 +40,14 @@ public class Driver {
 					System.out.println("Error, n=-1, check selectPlayer class");
 				}
 				
-				Hodder.doMove(hod, n, player[1], player[0], false);
+				Hodder.doMove(hod, n, player[1], player[0]);
 				
 				
 				
 				hod_number++;
 				System.out.println("Hod: " + hod_number);
 				hod = !hod;
-				System.out.println(Desk.printDesk(player[1], player[0],hod, winCount));
+				System.out.println(Desk.printDesk(player[1], player[0],hod));
 			}
 			
 			if(player[0].checkWin())
