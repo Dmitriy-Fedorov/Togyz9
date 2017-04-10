@@ -19,9 +19,13 @@ public class Kazan {
 		this.score = score;
 	}
 	
-	public void setKazan(int a){
+	/**
+	 * @param score
+	 * set score in Kazan to desired value, if Kazan is editable
+	 */
+	public void setKazan(int score){
 		if(editable){
-			score = a;
+			this.score = score;
 		}else{
 			System.out.println("This kazan is not editable");
 		}

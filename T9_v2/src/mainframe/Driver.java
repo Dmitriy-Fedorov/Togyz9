@@ -4,9 +4,9 @@ package mainframe;
 public class Driver {
 
 	public static void main(String[] args) {
-		int choose0 = 1;
-		int choose1 = 2, asd=0;
-		String[] igrok = {"human","AI_random","AI_brut","AI_deep1","AI_Deep2"};
+		int choose0 = 5;
+		int choose1 = 0, asd=0;
+		String[] igrok = {"human","AI_random","AI_brut","AI_deep1","AI_Deep2","AI_pridumayName"};
 		String igrok0 = igrok[choose0];
 		String igrok1 = igrok[choose1];
 		

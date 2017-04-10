@@ -44,17 +44,27 @@ public class Hodder {
 				System.out.print("Cell is empty or tuzdyk.\nTry another cell:\n");
 				n_1to9 = Integer.parseInt(Debug.getInput(sc));
 			}
+			
 		}else if(opponent.equals("AI_random")){
 				n_1to9 = ThreadLocalRandom.current().nextInt(1, 9 + 1);
 			while(player[hod_].checkZero(n_1to9-1)){
 				n_1to9 = ThreadLocalRandom.current().nextInt(1, 9 + 1);
 			}
 			System.out.println(n_1to9);
+			
 		}else if(opponent.equals("AI_brut")){
 			n_1to9 = brut.brut(player[1], player[0], hod, 0 /*dummy*/);
 			System.out.println(n_1to9);
+			
 		}else if(opponent.equals("AI_deep1")){
 			n_1to9 = brut.deepBrut(player[1], player[0], hod, 1);
+			while(player[hod_].checkZero(n_1to9-1)){
+				n_1to9 = ThreadLocalRandom.current().nextInt(1, 9 + 1);
+			}
+			System.out.println(n_1to9);
+			
+		}else if(opponent.equals("AI_pridumayName")){
+			n_1to9 = brut.pridumayName(6,player[1], player[0], hod);
 			while(player[hod_].checkZero(n_1to9-1)){
 				n_1to9 = ThreadLocalRandom.current().nextInt(1, 9 + 1);
 			}

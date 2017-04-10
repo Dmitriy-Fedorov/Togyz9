@@ -60,6 +60,10 @@ public class Desk extends Kazan{
 		return true;
 	}
 	
+	/**
+	 * @param n_0to8
+	 * @return true if specified cell is empty
+	 */
 	public boolean checkZero(int n_0to8){
 		if(cell[n_0to8]==0)	return true;
 		else return false;
@@ -278,6 +282,60 @@ public class Desk extends Kazan{
 	
 	public static void transferDesks(Desk from_player,Desk to_player){
 		to_player.setDesk(from_player.cell, from_player.checkScore());
+	}
+	
+	
+	public static ArrayList<Integer> toDatagram(boolean cheyHod,Desk player1,Desk player0){
+		ArrayList<Integer> datagram = new ArrayList<>();
+		// datagram {chey_hod :0,desk0[9] :1-9,score0 :10,desk1[9] :11-19,score1 :20}
+		if(cheyHod){
+			datagram.add(1);
+		}else{
+			datagram.add(0);
+		}
+		for(int i=0;i<9;i++){
+			datagram.add(player0.cell[i]);
+		}
+		datagram.add(player0.checkScore());
+		//System.out.println("p0 score: "+ player0.checkScore());
+		for(int i=0;i<9;i++){
+			datagram.add(player1.cell[i]);
+		}
+		datagram.add(player1.checkScore());
+		//System.out.println(datagram);
+		return datagram;
+	}
+	
+	public static void fromDatagram(ArrayList<Integer> datagram, Desk modify1, Desk modify0){
+		// datagram {chey_hod :0,desk0[9] :1-9,score0 :10,desk1[9] :11-19,score1 :20}
+		//int[] cell0 = new int[9],cell1 = new int[9];
+		for(int i=1;i<10;i++){
+			//cell0[i-1] = datagram.get(i);
+			modify0.cell[i-1] = datagram.get(i);
+		}
+		modify0.setKazan(datagram.get(10));
+		for(int i=11;i<19;i++){
+			//cell1[i-11] = datagram.get(i);
+			modify1.cell[i-11] = datagram.get(i);
+		}
+		modify1.setKazan(datagram.get(20));
+	}
+	
+	/**
+	 * @param datagram
+	 * This method prints out datagram in formated way 
+	 */
+	public static void printDatagram(ArrayList<Integer> datagram){
+		Desk player1 = new Desk("    temp1",true);
+		Desk player0 = new Desk("    temp0",true);
+		Desk.fromDatagram(datagram, player1, player0);
+		boolean hod;
+		if(datagram.get(0)==0)
+			hod = false;
+		else
+			hod = true;
+		
+		System.out.println(Desk.printDesk(player1, player0, hod));
 	}
 	
 	public static String printDesk(Desk player1, Desk player0, boolean hod){
