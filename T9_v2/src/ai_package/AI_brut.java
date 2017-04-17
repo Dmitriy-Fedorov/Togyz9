@@ -1,27 +1,21 @@
 package ai_package;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 import mainframe.Desk;
 
-public class AI_brut {
-	private static int randomNum_1to9 = 0;
+public class AI_brut extends AI_mainframe{
 	
 	Desk player_AI[] = {new Desk("     AI_brut_0*", true),
-			new Desk("     AI_brut_1*", true)};
+						new Desk("     AI_brut_1*", true)};
 	
 	public AI_brut(){
-		
-	}
-	Map<String, ArrayList<Integer> > hashMap = new HashMap<String, ArrayList<Integer> >();
-	
-	public static int randomMove(){
-		randomNum_1to9 = ThreadLocalRandom.current().nextInt(1, 9 + 1);
-		return randomNum_1to9;
+		//туптковая ветвь
 	}
 	
+	/**
+	 * туптковая ветвь
+	 * better to use hashBrut
+	 */
 	public int brut(Desk player_1,Desk player_0, boolean hod, int hod_number){
 		int maxScore = 0, temp, index1, index0, destCell_1to9,n_1to9=0;
 		Desk.transferDesks(player_1, player_AI[1]);
@@ -132,112 +126,6 @@ public class AI_brut {
 		
 		return top;
 	}
+		
 	
-////////////////////////////////////////////////////////////////////////////	
-	public int pridumayName(int deep,Desk in_player_1,Desk in_player_0, boolean cheyHod){
-		String key = "dg",keyTemp;
-		int keyIndex = 0,keyListLength,offset = 2,m;
-		//for(int i=0;i<=deep;i++){
-		//	key = key + "0";
-		//}
-		//String defaultKey = key;
-		ArrayList<String> keyList = new ArrayList<>();
-		keyList.add(key+0);
-		ArrayList<Integer> counter = new ArrayList<>();
-		//counter.add(1);
-		
-		ArrayList<Integer> init = Desk.toDatagram(cheyHod, in_player_1, in_player_0);
-		hashMap.put(key+0, init);
-		//Desk.printDatagram(hashMap.get(key));
-		
-		for(int level=1; level <= deep; level++){
-			//key = stringIndexer(key,offset,0,level);
-			
-			
-			keyListLength = keyList.size();
-			
-			for(;keyIndex<keyListLength;keyIndex++){
-				
-				for(int n=1;n<=9;n++){
-					//key = stringIndexer(key,offset,level,n);
-					keyTemp = key+level;
-					for(int i=counter.size()-1; i>=0; i--){
-						keyTemp = keyTemp+counter.get(i);
-					}
-					keyTemp = keyTemp + n;
-					
-					deepMover(n, keyTemp, hashMap.get(keyList.get(keyIndex)), cheyHod);
-					if(hashMap.containsKey(keyTemp)){
-						keyList.add(keyTemp);
-					}
-					
-					//Desk.printDatagram(hashMap.get(key));
-					//System.out.println(keyList);
-					
-				}
-				listCounter(counter);
-				
-			}
-			cheyHod = !cheyHod;
-		}
-		//System.out.println(hashMap.get("dg11"));
-		
-		System.out.println("hashMap size: "+hashMap.size());
-		return 1;
-	}
-	
-	// datagram {chey_hod :0,desk0[9] :1-9,score0 :10,desk1[9] :11-19,score1 :20}	
-	ArrayList<Integer> deepMover(int n,String key, ArrayList<Integer> datagram, boolean cheyHod){
-		int index1, index0;
-		boolean checkEmptyCell;
-		Desk deep1_n_level = new Desk("    key1_"+key,true);
-		Desk deep0_n_level = new Desk("    key0_"+key,true);
-		Desk.fromDatagram(datagram, deep1_n_level, deep0_n_level);
-		Desk[] deskArray = {deep0_n_level,deep1_n_level};
-		
-		if(cheyHod){
-			index1 = 1;
-			index0 = 0;
-		}else{
-			index1 = 0;
-			index0 = 1;
-		}
-		checkEmptyCell = deskArray[index1].checkZero(n-1);
-			
-		deskArray[index1].move(n, deskArray[index0]);
-		
-		System.out.println(Desk.printDesk(deep1_n_level, deep0_n_level, cheyHod));
-		
-		ArrayList<Integer> asd = Desk.toDatagram(cheyHod, deep1_n_level, deep0_n_level);
-		//if(!checkEmptyCell)
-			this.hashMap.put(key, asd);
-		
-		
-		return datagram;
-	}
-	
-	String stringIndexer(String str, int offset, int index, int data){
-		return str.substring(0, offset + index)+ data + str.substring(offset + index+1);
-	}
-	
-	void listCounter(ArrayList<Integer> count){
-		if(count.size()==0){
-			count.add(0);
-		}
-		int temp0 = count.get(0);
-		count.set(0,temp0 + 1);
-		
-		for(int i=0;i<count.size();i++){
-			if(count.get(i)>9){
-				count.set(i, 1);
-				if(i+1<count.size()){
-					count.set(i+1, count.get(i+1)+1);
-				}else{
-					count.add(1);
-				}
-				
-			}
-			
-		}
-	}
 }

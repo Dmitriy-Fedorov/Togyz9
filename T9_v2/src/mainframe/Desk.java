@@ -129,11 +129,12 @@ public class Desk extends Kazan{
 		return a;
 	}
 	
-	private int increment(int begin_1to9){
+	private int increment(int begin_1to9, boolean toPrint){
 		int begin_0to8 = begin_1to9 -1;
 		if(cell[begin_0to8]==0){
 			//just in case if debug will not handle error
-			System.out.println("Cell is empty (Desk.increment(int begin) )");
+			if(toPrint)
+				System.out.println("Cell is empty (Desk.increment(int begin) )");
 			return -1;
 		}else if(cell[begin_0to8]==1){
 			if(begin_0to8 == 8){
@@ -207,10 +208,10 @@ public class Desk extends Kazan{
 		return dest_1to9;
 	}	
 		
-	public int move(int begin_1to9, Desk opponent){
+	public int move(int begin_1to9, Desk opponent, boolean toPrint){
 		int score = this.checkScore();
 		int destCell_1to9 = this.getDestinationCELL(begin_1to9-1);
-		int remainder = this.increment(begin_1to9); //check +
+		int remainder = this.increment(begin_1to9,toPrint); //check +
 		boolean enemy = false;
 		//if enemy false destCell is on my desk
 		
@@ -227,7 +228,8 @@ public class Desk extends Kazan{
 			}
 		}
 		
-		System.out.println("Desk.move, destCell_1to9: "+destCell_1to9);
+		if(toPrint)
+			System.out.println("Desk.move, destCell_1to9: "+destCell_1to9);
 		if(enemy){
 			opponent.setTuzdyk(destCell_1to9 - 1, this, false);
 			if(opponent.checkEven(destCell_1to9-1)){

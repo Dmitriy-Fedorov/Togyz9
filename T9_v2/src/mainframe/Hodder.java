@@ -4,6 +4,7 @@ import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
 
 import ai_package.AI_brut;
+import ai_package.AI_hashBrut;
 
 
 
@@ -15,9 +16,9 @@ public class Hodder {
 		player[1] = player_1;	//true hod
 		player[0] = player_0;	//false hod
 		if(hod){
-			player[1].move(n, player[0]);
+			player[1].move(n, player[0],true);
 		}else{
-			player[0].move(n, player[1]);
+			player[0].move(n, player[1],true);
 		}
 		return 0;
 	}
@@ -29,7 +30,7 @@ public class Hodder {
 		player[0] = player_0;
 		int n_1to9 = -1,hod_;
 		AI_brut brut = new AI_brut();
-		
+		AI_hashBrut hashBrut = new AI_hashBrut();
 		if(hod)
 			hod_ = 1;
 		else
@@ -63,8 +64,8 @@ public class Hodder {
 			}
 			System.out.println(n_1to9);
 			
-		}else if(opponent.equals("AI_pridumayName")){
-			n_1to9 = brut.pridumayName(6,player[1], player[0], hod);
+		}else if(opponent.equals("AI_hashBrut")){
+			n_1to9 = hashBrut.hashBrut(11,player[1], player[0], hod);
 			while(player[hod_].checkZero(n_1to9-1)){
 				n_1to9 = ThreadLocalRandom.current().nextInt(1, 9 + 1);
 			}
