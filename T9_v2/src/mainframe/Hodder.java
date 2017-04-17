@@ -10,6 +10,16 @@ import ai_package.AI_hashBrut;
 
 
 public class Hodder {
+	public static final String ANSI_RESET = "\u001B[0m";
+	public static final String ANSI_BLACK = "\u001B[30m";
+	public static final String ANSI_RED = "\u001B[31m";
+	public static final String ANSI_GREEN = "\u001B[32m";
+	public static final String ANSI_YELLOW = "\u001B[33m";
+	public static final String ANSI_BLUE = "\u001B[34m";
+	public static final String ANSI_PURPLE = "\u001B[35m";
+	public static final String ANSI_CYAN = "\u001B[36m";
+	public static final String ANSI_WHITE = "\u001B[37m";
+	
 	private static Desk player[] = {new Desk("Player 0"),new Desk("Player 1")};
 		
 	public static int doMove(boolean hod,int n, Desk player_1,Desk player_0){
@@ -24,7 +34,15 @@ public class Hodder {
 	}
 	
 	
-	public static int selectPlayer(boolean hod, String opponent,Desk player_1,Desk player_0){
+	/**
+	 * @param hod
+	 * @param opponent
+	 * @param player_1
+	 * @param player_0
+	 * @param settings for AI_hashBrut:{deep,cutting breadth}
+	 * @return
+	 */
+	public static int selectPlayer(boolean hod, String opponent,Desk player_1,Desk player_0,int[] setting){
 		
 		player[1] = player_1;
 		player[0] = player_0;
@@ -65,11 +83,11 @@ public class Hodder {
 			System.out.println(n_1to9);
 			
 		}else if(opponent.equals("AI_hashBrut")){
-			n_1to9 = hashBrut.hashBrut(11,player[1], player[0], hod);
+			n_1to9 = hashBrut.hashBrut(setting,player[1], player[0], hod);
 			while(player[hod_].checkZero(n_1to9-1)){
 				n_1to9 = ThreadLocalRandom.current().nextInt(1, 9 + 1);
 			}
-			System.out.println(n_1to9);
+			//System.out.println(ANSI_YELLOW+"Hodder.selectPlayer n1to9="+n_1to9+ANSI_RESET);
 		}
 		
 		return n_1to9;

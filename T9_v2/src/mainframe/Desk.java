@@ -229,7 +229,7 @@ public class Desk extends Kazan{
 		}
 		
 		if(toPrint)
-			System.out.println("Desk.move, destCell_1to9: "+destCell_1to9);
+			System.out.println(ANSI_YELLOW+"Desk.move, destCell_1to9: "+destCell_1to9+ANSI_RESET);
 		if(enemy){
 			opponent.setTuzdyk(destCell_1to9 - 1, this, false);
 			if(opponent.checkEven(destCell_1to9-1)){
@@ -337,7 +337,7 @@ public class Desk extends Kazan{
 		else
 			hod = true;
 		
-		System.out.println(Desk.printDesk(player1, player0, hod));
+		System.out.println(ANSI_RED+Desk.printDesk(player1, player0, hod));
 	}
 	
 	public static String printDesk(Desk player1, Desk player0, boolean hod){
@@ -352,7 +352,7 @@ public class Desk extends Kazan{
 			else
 				toPrint1 = toPrint1 + "  *";
 		}
-		toPrint1=toPrint1+String.format("%s\tScore: %d\tWin: %d", player1.name, player1.checkScore(),player1.getWinCount());
+		toPrint1=toPrint1+String.format("%s%s\tScore: %d\tWin: %d%s",ANSI_GREEN, player1.name, player1.checkScore(),player1.getWinCount(),ANSI_RESET);
 		if(hod){
 			toPrint1=toPrint1+" *";
 		}
@@ -362,7 +362,7 @@ public class Desk extends Kazan{
 			else
 				toPrint0 = toPrint0 + "  *";
 		}
-		toPrint0=toPrint0+String.format("%s\tScore: %d\tWin: %d", player0.name, player0.checkScore(),player0.getWinCount());
+		toPrint0=toPrint0+String.format("%s%s\tScore: %d\tWin: %d%s",ANSI_GREEN, player0.name, player0.checkScore(),player0.getWinCount(),ANSI_RESET);
 		if(!hod){
 			toPrint0=toPrint0+" *";
 		}
@@ -372,9 +372,10 @@ public class Desk extends Kazan{
 	
 	
 	@Override
-	public boolean checkWin(){
-		if(super.checkWin() || this.isDeskEmpty()){
-			super.winCounterPlusPlus();
+	public boolean checkWin(boolean increment){
+		if(super.checkWin(increment) || this.isDeskEmpty()){
+			if(increment)
+				super.winCounterPlusPlus();
 			return true;
 		}else
 			return false;

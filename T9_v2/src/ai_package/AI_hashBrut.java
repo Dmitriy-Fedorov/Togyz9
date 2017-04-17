@@ -5,8 +5,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.ThreadLocalRandom;
 
 import mainframe.Desk;
@@ -19,9 +17,19 @@ public class AI_hashBrut extends AI_mainframe{
 		
 	}
 
-	public int hashBrut(int deep,Desk in_player_1,Desk in_player_0, boolean cheyHod){
+	public int hashBrut(int[] setting,Desk in_player_1,Desk in_player_0, boolean cheyHod){
+		int deep ,cutWidth;
+		try{
+			deep = setting[0];
+			cutWidth=setting[1];
+		}catch(Exception e){
+			System.out.println(e);
+			deep = 1;
+			cutWidth = 9;
+		}
 		String key = "dg",keyTemp;
 		int keyIndex = 0,keyListLength;
+		boolean cheyHodFinal = cheyHod;
 		//for(int i=0;i<=deep;i++){
 		//	key = key + "0";
 		//}
@@ -29,11 +37,10 @@ public class AI_hashBrut extends AI_mainframe{
 		
 		keyList.add(key+0);
 		ArrayList<Integer> counter = new ArrayList<>();
-		//counter.add(1);
 		
 		ArrayList<Integer> init = Desk.toDatagram(cheyHod, in_player_1, in_player_0);
 		hashMap.put(key+0, init);
-		//Desk.printDatagram(hashMap.get(key));
+		//Desk.printDatagram(hashMap.get(key+0));
 		
 		for(int level=1; level <= deep; level++){
 						
@@ -63,19 +70,24 @@ public class AI_hashBrut extends AI_mainframe{
 				//method for choosing best 3 datagram in one level
 				
 			}
-			keyCleaner(level, 2, cheyHod);
+			keyCleaner2(level, cutWidth, cheyHod);
 			cheyHod = !cheyHod;
-			//keyOfLevelN(level);
+			
 		}
 		//System.out.println(hashMap.get("dg11"));
 		//this.keyCleaner(3, false);
-		System.out.println("hashMap size: "+hashMap.size());
+		System.out.println(ANSI_BLUE+"AI_hashbrut.hashBrut hashMap size: "+hashMap.size()+ANSI_RESET);
 		
-		return hodder(deep);
+		//int n = hodderRandom(deep);
+		int n = hodderMAX(deep,cheyHodFinal);
+		this.reset();
+		System.out.println(ANSI_BLUE+"AI_hashbrut.hashBrut n="+n+ANSI_RESET);
+		return n;
 	}
-	int hodder(int deep){
+	
+	int hodderRandom(int deep){
 		ArrayList<String> keyOfLastLevel = keyOfLevelN(deep);
-		System.out.println("size "+keyOfLastLevel.size());
+		System.out.println("AI_hashBrut.hodderRandom size "+keyOfLastLevel.size());
 		if(keyOfLastLevel.size()==0)
 			return super.randomMove();
 		int random = ThreadLocalRandom.current().nextInt(0, keyOfLastLevel.size());
@@ -84,6 +96,19 @@ public class AI_hashBrut extends AI_mainframe{
 		String parse = ""+ keyOfLastLevel.get(random).charAt(3);
 		return Integer.parseInt(parse);
 	}
+	
+	int hodderMAX(int deep,boolean cheyHod){
+		ArrayList<String> keyOfLastLevel = keyOfLevelN(deep);
+		System.out.println("AI_hashBrut.hodderMAX "+keyOfLastLevel.size());
+		if(keyOfLastLevel.size()==0)
+			return super.randomMove();
+		super.sortArrayList(keyOfLastLevel, hashMap, cheyHod);
+		int deltaScore = hashMap.get(keyOfLastLevel.get(0)).get(10)-hashMap.get(keyOfLastLevel.get(0)).get(20);
+		System.out.println("AI_hashBrut.hodderMAX "+keyOfLastLevel.get(0)+" deltaScore " + deltaScore);
+		String parse = ""+ keyOfLastLevel.get(0).charAt(3);
+		return Integer.parseInt(parse);
+	}
+	
 	/**
 	 * @return ArrayList of keys on specified level
 	 */
@@ -117,6 +142,7 @@ public class AI_hashBrut extends AI_mainframe{
 			index0 = 10;
 			index1 = 20;
 		}
+		super.sortArrayList(keyOfLevelN, hashMap, cheyHod);
 		
 		//Set<ArrayList<Integer>> sortedSet = new TreeSet<ArrayList<Integer>>(new datagramComparator());
 		for(int i=0;i<keyOfLevelN.size();i++){
@@ -137,6 +163,7 @@ public class AI_hashBrut extends AI_mainframe{
                return rhs[1]-lhs[1];
             }
         });
+		
 		/*System.out.println("max3 after:"+ max3);
 		for(int i=0;i<max3.size();i++){
 			System.out.println("["+max3.get(i)[0]+ ","+max3.get(i)[1]+"]");
@@ -147,7 +174,36 @@ public class AI_hashBrut extends AI_mainframe{
 			keyList.remove(keyOfLevelN.get(index));
 		}
 	}
-	
+	void keyCleaner2(int level,int topN, boolean cheyHod){
+		ArrayList<String> keyOfLevelN = keyOfLevelN(level);
+		ArrayList<int[]> max3 = new ArrayList<>();
+		//List<Integer> sortedSet = new SortedList<Integer>();
+		int index0,index1;
+		int score0, score1;
+		if(cheyHod){
+			index0 = 20; //current player
+			index1 = 10; //next player
+		}else{
+			index0 = 10;
+			index1 = 20;
+		}
+		
+		super.sortArrayList(keyOfLevelN, hashMap, cheyHod);
+		
+
+		for(int i=0;i<keyOfLevelN.size();i++){
+			int deltaScore = hashMap.get(keyOfLevelN.get(i)).get(index0)-hashMap.get(keyOfLevelN.get(i)).get(index1);
+			if(i>=topN){
+				hashMap.remove(keyOfLevelN.get(i));
+				keyList.remove(keyOfLevelN.get(i));
+				//System.out.println("AI_hashBrut.keyCleaner2 "+keyOfLevelN.get(i)+" deltaScore "+deltaScore);
+			}else{
+				System.out.println("AI_hashBrut.keyCleaner2* "+keyOfLevelN.get(i)+" deltaScore "+deltaScore);
+				Desk.printDatagram(hashMap.get(keyOfLevelN.get(i)));
+			}
+			
+		}
+	}
 	/**
 	 * @param n: move from this cell
 	 * @param key: encoded state of desk
@@ -174,7 +230,7 @@ public class AI_hashBrut extends AI_mainframe{
 			
 		deskArray[index1].move(n, deskArray[index0],false);
 		
-		//System.out.println(Desk.printDesk(deep1_n_level, deep0_n_level, cheyHod));
+		//System.out.println(ANSI_YELLOW+Desk.printDesk(deep1_n_level, deep0_n_level, cheyHod)+ANSI_RESET);
 		
 		ArrayList<Integer> asd = Desk.toDatagram(cheyHod, deep1_n_level, deep0_n_level);
 		if(!checkEmptyCell)
@@ -210,5 +266,10 @@ public class AI_hashBrut extends AI_mainframe{
 			}
 			
 		}
+	}
+	
+	void reset(){
+		hashMap.clear();
+		keyList.clear();
 	}
 }
